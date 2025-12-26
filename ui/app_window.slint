@@ -1,0 +1,222 @@
+import { Button, ComboBox, ListView, TabWidget, LineEdit, Palette} from "std-widgets.slint";
+
+component StdText inherits Text {
+    horizontal-alignment: center;
+    color: #ffffff;
+}
+
+component StdBotHeaderText inherits StdText {
+    font-size: 24px;
+}
+
+component StdHeaderText inherits StdText {
+    in property <string> app-name;
+    text: app-name;
+    font-size: 30px;
+    font-weight: 600;
+}
+
+component StdLicense inherits VerticalLayout {
+    padding-top: 440px;
+    StdText {
+        text: "© 2025 HardCodeDev";
+        font-size: 13px;
+    }
+}
+
+component StdError inherits VerticalLayout {
+    in property <string> error-message;
+    padding-top: 400px;
+    StdText {
+        text: error-message;
+        font-size: 12px;
+    }
+}
+
+component StdBaseVertLayout inherits VerticalLayout{
+    spacing: 25px;
+    padding-right: 30px;
+    padding-left: 30px;
+    padding-bottom: 100px;
+
+    // Somehow it fixed floating text problem bruh
+    alignment: LayoutAlignment.center;
+}
+
+component StdVertLayout inherits VerticalLayout {
+    spacing: 6px;
+}
+
+component StdButton inherits Button {
+    height: 35px;
+}
+
+component StdDisplaySequenceElements inherits VerticalLayout {
+    in property <[string]> sequence-elements;
+    ListView {
+        min-height: 100px;
+        for data in sequence-elements : Rectangle {
+            property<float> t: 0.5 + 0.5 * Math.sin(animation-tick() / 10s * 1turn);
+            border-color: @linear-gradient(
+                    45deg,
+                    #0d1547.mix(#073c3f, t) 0%,
+                    #091734.mix(#07284b, t) 50%,
+                    #0e2a8f.mix(#0b363d, t) 100%);
+
+            border-radius: 10px;
+            border-width: 3px;
+            height: 40px;
+            background: Palette.control-background;
+            
+            width: parent.width;
+            Text {
+                text: data;
+                color: #ffffff;
+            }
+        }
+    } 
+}
+
+export component MainWindow inherits Window {
+    property <string> app-name: "Sequence Runner";
+
+    in property <[string]> added-sequence-elements;
+    in property <[string]> existed-sequence-elements;
+    in property <[string]> sequences;
+    in property <string> error-message;
+
+    in-out property <string> selected-sequence-to-run;
+    callback add_element();
+    callback remove_element();
+    callback create_sequence(string);
+
+    callback start_sequence();
+    callback show_sequence_files();
+    callback hide_sequence_files();
+    callback remove_sequence();
+
+    width: 400px;
+    height: 500px;
+    default-font-size: 17px;
+    title: app-name;
+    icon: @image-url("./media/icon.ico");
+
+    property<float> t: 0.5 + 0.5 * Math.sin(animation-tick() / 10s * 1turn);
+    background: @linear-gradient(
+        45deg,
+        #0d1547.mix(#073c3f, t) 0%,
+        #091734.mix(#07284b, t) 50%,
+        #0e2a8f.mix(#0b363d, t) 100%
+    );
+
+    TabWidget {    
+        Tab {
+            title: "Create";
+
+            StdBaseVertLayout { 
+                StdHeaderText {
+                    app-name: app-name;
+                }
+        
+                StdVertLayout {
+                    StdBotHeaderText {
+                        text: "Create Sequence";
+                        font-size: 24px;
+                    }
+    
+                    sequence_name := LineEdit {
+                        enabled: added-sequence-elements.length != 0;
+                        placeholder-text: "Sequence name";
+                        horizontal-alignment: center;                
+                    }
+
+                    StdButton {
+                        enabled: added-sequence-elements.length != 0 && !sequence_name.text.is-empty;
+                        text: "Create sequence";                 
+                        clicked => root.create_sequence(sequence_name.text);       
+                    }
+
+                    StdButton {
+                        text: "Add element";                
+                        clicked => root.add_element();
+                    }
+
+                    StdButton {
+                        enabled: added-sequence-elements.length != 0;
+                        text: "Remove element";                
+                        clicked => root.remove_element();
+                    }
+        
+                    StdDisplaySequenceElements {
+                        sequence-elements: added-sequence-elements;
+                    }
+                    
+                }  
+            }
+
+            StdError {
+                error-message: error-message;
+            }
+
+            StdLicense {}
+        }
+        Tab {
+            title: "Run";
+                    
+            StdBaseVertLayout {          
+                StdHeaderText {
+                    app-name: app-name;
+                }
+
+                StdVertLayout {
+                    StdBotHeaderText {
+                        text: "Run Selected Sequence";
+                        font-size: 24px;
+                    }
+
+                    seq_choose := ComboBox {
+                        height: 40px;
+                        model: sequences;
+                        selected(current-value) => {
+                            selected-sequence-to-run = current-value;
+                            hide_sequence_files();
+                        }
+                     }
+
+                     StdButton {
+                        enabled: !selected-sequence-to-run.is-empty;
+                        text: "Start sequence";             
+                        clicked => root.start_sequence();
+                    }
+
+                    
+                    StdButton {
+                        enabled: !selected-sequence-to-run.is-empty;
+                        text: "Show sequence files";             
+                        clicked => root.show_sequence_files();
+                    }
+
+                    StdButton {
+                        enabled: !selected-sequence-to-run.is-empty;
+                        text: "Remove sequence";                 
+                        clicked => { 
+                            root.remove_sequence(); 
+                            selected-sequence-to-run = seq_choose.current-value    
+                        }  
+                    }
+
+                    StdDisplaySequenceElements {
+                        sequence-elements: existed-sequence-elements;
+                    }
+                }
+            }
+
+            StdError {
+                error-message: error-message;
+            }
+
+            StdLicense {}
+        }
+    }
+    
+}

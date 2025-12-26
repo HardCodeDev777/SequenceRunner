@@ -1,0 +1,4 @@
+* text=auto
+*.hpp linguist-language=C++
+# I don't want 20k lines of cpp in my stats
+src/external/** linguist-vendored
