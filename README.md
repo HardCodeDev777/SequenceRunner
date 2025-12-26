@@ -20,8 +20,8 @@ And now imagine that you can launch all of these with just **one click**. Sound 
 
 ## 📦 Installation
 
-1. Download from the lates Release `SequenceStarter.zip`
-2. Unzip it and run `Sequence_Starter.exe`
+1. Download from the lates Release `Sequence_Runner.zip`
+2. Unzip it and run `Sequence_Runner.exe`
 
 ---
 
