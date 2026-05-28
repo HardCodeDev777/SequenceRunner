@@ -4,7 +4,7 @@
 
 ## 🚀 Overview
 
-**Sequence Runner** is an very easy-to-use and elegant app for making sequences of `.exe`, managing and running them. Build with **C++** and **Slint**.
+**Sequence Runner** is an very easy-to-use and beautiful app for making sequences of `.exe`, managing and running them. Build with **C++** and **Slint**.
 
 <img src=".github/basic.png" height="400">
 
