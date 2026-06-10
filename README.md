@@ -10,14 +10,6 @@
 
 ---
 
-### Why should I use it? 
-
-Imagine you enjoy playing Severed Steel with music while recording your gameplay. Basicly you'd **open Steam**, **start Severed Steel**, then **start OBS Studio**, then **open AppleMusic**. And what if you play like that every day? 
-
-And now imagine that you can launch all of these with just **one click**. Sound cool, right?
-
----
-
 ## 📦 Installation
 
 1. Download from the lates Release `Sequence_Runner.zip`
